@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#173f32">
+    <meta name="description" content="A simple GreenOps view of estimated AWS account emissions over time.">
+    <title>Canopy | Cloud carbon, in context</title>
+    <link rel="stylesheet" href="./vendor/uPlot.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <script src="./vendor/uPlot.iife.min.js" defer></script>
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Canopy home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none">
+            <path d="M16 26V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M16 18C8.5 18 5 14.5 5 8c7.5 0 11 3.5 11 10Z" fill="#b7d99b" />
+            <path d="M16 14c0-6 3.5-9 10-9 0 6-3 9-10 9Z" fill="#e4c772" />
+            <path d="m10 11 6 6m6-8-6 6" stroke="#315c42" stroke-width="1.3" stroke-linecap="round" />
+          </svg>
+        </span>
+        <span class="brand-name">miamolliedev<span class="brand-period">.</span></span>
+        <span class="brand-divider" aria-hidden="true"></span>
+        <span class="brand-caption">CLOUD CARBON</span>
+      </a>
+      <a class="top-link" href="#data-notes">About the data <span aria-hidden="true">↘</span></a>
+    </header>
+
+    <main class="page-shell">
+      <section class="intro" aria-labelledby="page-title">
+        <div class="intro-copy">
+          <p class="eyebrow"><span class="eyebrow-dot"></span>AWS Account GreenOps Visualisation</p>
+          <h1 id="page-title">Cloud emissions,<br><em>in context.</em></h1>
+          <p class="intro-text">A clear, calm view of how estimated carbon emissions from an AWS account change over time.</p>
+        </div>
+      </section>
+
+      <section class="metrics" aria-label="Latest emissions summary">
+        <article class="metric metric-primary">
+          <span class="metric-label">Latest month</span>
+          <strong class="metric-value" id="latest-total">--</strong>
+          <span class="metric-detail" id="latest-period">Loading demo data</span>
+        </article>
+        <article class="metric">
+          <span class="metric-label">Change from last month</span>
+          <strong class="metric-value metric-change" id="monthly-change">--</strong>
+          <span class="metric-detail">estimated CO₂e</span>
+        </article>
+        <article class="metric">
+          <span class="metric-label">History shown</span>
+          <strong class="metric-value" id="period-count">--</strong>
+          <span class="metric-detail">monthly data points</span>
+        </article>
+      </section>
+
+      <section class="chart-panel" aria-labelledby="chart-heading">
+        <div class="chart-heading-row">
+          <div>
+            <p class="section-kicker">THE BIG PICTURE</p>
+            <h2 id="chart-heading">Estimated emissions</h2>
+            <p class="chart-subtitle">Monthly total across services <span aria-hidden="true">·</span> kg CO₂e</p>
+          </div>
+        </div>
+
+        <div class="chart-wrap">
+          <div id="emissions-chart" class="emissions-chart" role="img" aria-label="Monthly total estimated AWS account emissions in kilograms of carbon dioxide equivalent"></div>
+          <p id="chart-error" class="chart-error" hidden>We couldn’t load the emissions data. Please try again later.</p>
+        </div>
+      </section>
+
+      <section class="data-notes" id="data-notes" aria-labelledby="data-notes-heading">
+        <div class="notes-heading">
+          <span class="notes-icon" aria-hidden="true">
+            <svg viewBox="0 0 28 28" fill="none">
+              <path d="M14 23V12m0 7c-5.3 0-8-2.5-8-7.5 5.3 0 8 2.5 8 7.5Zm0-5c0-4.3 2.5-6.5 8-6.5 0 4.3-2.2 6.5-8 6.5Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
+          <div>
+            <h2 id="data-notes-heading">How this view grows</h2>
+          </div>
+        </div>
+        <p class="notes-copy">The planned pipeline combines AWS billing exports with Greenpixie rate-card data, then publishes a small monthly emissions file for this chart. This demo is not connected to either source yet.</p>
+        <div class="data-flow" aria-label="Planned data flow">
+          <span class="flow-step"><span class="flow-number">01</span> AWS billing export</span>
+          <span class="flow-arrow" aria-hidden="true">→</span>
+          <span class="flow-step"><span class="flow-number">02</span> Greenpixie rate card</span>
+          <span class="flow-arrow" aria-hidden="true">→</span>
+          <span class="flow-step"><span class="flow-number">03</span> Monthly estimate</span>
+        </div>
+        <p class="data-caveat" id="data-caveat">Illustrative values only. Emissions are estimates, not direct energy measurements.</p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-copy">
+        <span>Made for clearer GreenOps.</span>
+        <span class="footer-carbon">Site footprint estimate: pending live-site measurement (g CO₂e/page view).</span>
+      </div>
+      <a href="./carbon.txt">carbon.txt <span aria-hidden="true">↗</span></a>
+    </footer>
+  </body>
+</html>

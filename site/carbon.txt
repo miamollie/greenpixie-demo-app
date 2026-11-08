@@ -1,0 +1,7 @@
+version = "0.6"
+last_updated = 2026-11-08
+
+[org]
+disclosures = [
+  { doc_type = "measurement-data", url = "https://example.com/data/site-footprint.json", title = "Website page-view emissions estimate", description = "Placeholder only. Replace example.com with the live site domain and publish an estimate based on the deployed site before making a footprint claim." }
+]
