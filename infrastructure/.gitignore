@@ -2,3 +2,4 @@ node_modules/
 dist/
 cdk.out/
 .cdk.staging/
+__pycache__/
