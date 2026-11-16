@@ -35,9 +35,7 @@
             />
           </svg>
         </span>
-        <span class="brand-name"
-          >miamollie<span class="brand-period">dev</span></span
-        >
+        <span class="brand-name">@miamollie</span>
       </a>
       <a class="top-link" href="#data-notes"
         >About the data <span aria-hidden="true">↘</span></a
@@ -48,9 +46,9 @@
       <section class="intro" aria-labelledby="page-title">
         <div class="intro-copy">
           <p class="eyebrow">
-            <span class="eyebrow-dot"></span>AWS Account GreenOps Visualisation
+            <span class="eyebrow-dot"></span>GreenOps Visualisation
           </p>
-          <h1 id="page-title">Cloud emissions,<br /><em>in context.</em></h1>
+          <h1 id="page-title">Cloud carbon emissions</h1>
         </div>
       </section>
 
@@ -79,22 +77,16 @@
       <section class="chart-panel" aria-labelledby="chart-heading">
         <div class="chart-heading-row">
           <div>
-            <p class="section-kicker">THE BIG PICTURE</p>
             <h2 id="chart-heading">Estimated emissions</h2>
             <p class="chart-subtitle">
-              Monthly total across services <span aria-hidden="true">·</span> kg
-              CO₂e
+              Monthly contributions by service and resource
+              <span aria-hidden="true">·</span> kg CO₂e
             </p>
           </div>
         </div>
 
         <div class="chart-wrap">
-          <div
-            id="emissions-chart"
-            class="emissions-chart"
-            role="img"
-            aria-label="Monthly total estimated AWS account emissions in kilograms of carbon dioxide equivalent"
-          ></div>
+          <div id="emissions-chart" class="emissions-chart"></div>
           <p id="chart-error" class="chart-error" hidden>
             We couldn’t load the emissions data. Please try again later.
           </p>
@@ -123,37 +115,49 @@
           </div>
         </div>
         <p class="notes-copy">
-          The planned pipeline combines AWS billing exports with Greenpixie
-          rate-card data, then publishes a small monthly emissions file for this
-          chart. This demo is not connected to either source yet.
+          Each month, a Lambda joins AWS CUR billing data with Greenpixie rate
+          card data from its
+          <a href="https://greenpixie.com/docs/guides/enrich-cur-api">API</a>,
+          then publishes emissions totals for this graph.
         </p>
-        <div class="data-flow" aria-label="Planned data flow">
+        <div class="data-flow" aria-label="Monthly data flow">
           <span class="flow-step"
-            ><span class="flow-number">01</span> AWS billing export</span
+            ><span class="flow-number">01</span> AWS CUR billing</span
           >
           <span class="flow-arrow" aria-hidden="true">→</span>
           <span class="flow-step"
-            ><span class="flow-number">02</span> Greenpixie rate card</span
+            ><span class="flow-number">02</span> Greenpixie API</span
           >
           <span class="flow-arrow" aria-hidden="true">→</span>
           <span class="flow-step"
-            ><span class="flow-number">03</span> Monthly estimate</span
+            ><span class="flow-number">03</span> Lambda joins data</span
+          >
+          <span class="flow-arrow" aria-hidden="true">→</span>
+          <span class="flow-step"
+            ><span class="flow-number">04</span> Emissions graph</span
           >
         </div>
         <p class="data-caveat" id="data-caveat">
-          Illustrative values only. Emissions are estimates, not direct energy
-          measurements.
+          Illustrative values only: the GreenPixie API only provides EC2 data in
+          its free tier, and I don't have any _real_ Ec2 instances running. The
+          stack is real, the workflow is tested, but the data is mocked.
         </p>
       </section>
     </main>
 
     <footer class="footer">
       <div class="footer-copy">
-        <span>Made for clearer GreenOps.</span>
-        <span class="footer-carbon"
-          >Site footprint estimate: pending live-site measurement (g CO₂e/page
-          view).</span
+        <a
+          href="https://www.websitecarbon.com/website/d19a4fmvijk18e-cloudfront-net/"
+          >Carbon footprint estimate by Website Carbon</a
         >
+        <span class="footer-carbon"
+          >Site footprint estimate: 0.02g CO₂e/page view.</span
+        >
+        If viewed 10,000 times, this web page emits the amount of carbon that 1
+        tree absorbs in a year. If this site used
+        <a href="https://app.greenweb.org/directory/">green hosting</a>, then it
+        would emit 9% less CO2.
       </div>
       <a href="./carbon.txt">carbon.txt <span aria-hidden="true">↗</span></a>
     </footer>

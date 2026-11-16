@@ -1,7 +1,7 @@
 {
-  "status": "pending",
-  "estimated_gco2e_per_page_view": null,
-  "measurement_date": null,
-  "methodology": null,
-  "note": "Placeholder. Measure the deployed site and document the methodology before publishing an estimate."
+    "status": "pending",
+    "estimated_gco2e_per_page_view": null,
+    "measurement_date": null,
+    "methodology": null,
+    "note": "Placeholder. Measure the deployed site and document the methodology before publishing an estimate."
 }

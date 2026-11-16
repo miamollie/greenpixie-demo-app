@@ -1,0 +1,136 @@
+{
+    "schema_version": 2,
+    "dataset": "demo",
+    "generated_at": "2026-10-31T12:00:00Z",
+    "unit": "kgCO2e",
+    "period": "month",
+    "methodology": "Mock monthly service and resource values only. Greenpixie's free tier covers EC2, but this account has no real EC2 instances. This is not live billing data or a direct energy measurement.",
+    "periods": [
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+    ],
+    "observations": [
+        {
+            "period": "2026-07",
+            "service": "AmazonEC2",
+            "resource": "t5.large",
+            "emissions_kg_co2e": 370
+        },
+        {
+            "period": "2026-07",
+            "service": "AmazonEC2",
+            "resource": "t3.medium",
+            "emissions_kg_co2e": 300
+        },
+        {
+            "period": "2026-07",
+            "service": "AmazonS3",
+            "resource": "Standard storage",
+            "emissions_kg_co2e": 220
+        },
+        {
+            "period": "2026-07",
+            "service": "AmazonRDS",
+            "resource": "db.t3.medium",
+            "emissions_kg_co2e": 300
+        },
+        {
+            "period": "2026-07",
+            "service": "AmazonCloudWatch",
+            "resource": "Metrics and logs",
+            "emissions_kg_co2e": 222
+        },
+        {
+            "period": "2026-08",
+            "service": "AmazonEC2",
+            "resource": "t5.large",
+            "emissions_kg_co2e": 355
+        },
+        {
+            "period": "2026-08",
+            "service": "AmazonEC2",
+            "resource": "t3.medium",
+            "emissions_kg_co2e": 285
+        },
+        {
+            "period": "2026-08",
+            "service": "AmazonS3",
+            "resource": "Standard storage",
+            "emissions_kg_co2e": 218
+        },
+        {
+            "period": "2026-08",
+            "service": "AmazonRDS",
+            "resource": "db.t3.medium",
+            "emissions_kg_co2e": 292
+        },
+        {
+            "period": "2026-08",
+            "service": "AmazonCloudWatch",
+            "resource": "Metrics and logs",
+            "emissions_kg_co2e": 217
+        },
+        {
+            "period": "2026-09",
+            "service": "AmazonEC2",
+            "resource": "t5.large",
+            "emissions_kg_co2e": 340
+        },
+        {
+            "period": "2026-09",
+            "service": "AmazonEC2",
+            "resource": "t3.medium",
+            "emissions_kg_co2e": 270
+        },
+        {
+            "period": "2026-09",
+            "service": "AmazonS3",
+            "resource": "Standard storage",
+            "emissions_kg_co2e": 210
+        },
+        {
+            "period": "2026-09",
+            "service": "AmazonRDS",
+            "resource": "db.t3.medium",
+            "emissions_kg_co2e": 280
+        },
+        {
+            "period": "2026-09",
+            "service": "AmazonCloudWatch",
+            "resource": "Metrics and logs",
+            "emissions_kg_co2e": 206
+        },
+        {
+            "period": "2026-10",
+            "service": "AmazonEC2",
+            "resource": "t5.large",
+            "emissions_kg_co2e": 325
+        },
+        {
+            "period": "2026-10",
+            "service": "AmazonEC2",
+            "resource": "t3.medium",
+            "emissions_kg_co2e": 260
+        },
+        {
+            "period": "2026-10",
+            "service": "AmazonS3",
+            "resource": "Standard storage",
+            "emissions_kg_co2e": 205
+        },
+        {
+            "period": "2026-10",
+            "service": "AmazonRDS",
+            "resource": "db.t3.medium",
+            "emissions_kg_co2e": 275
+        },
+        {
+            "period": "2026-10",
+            "service": "AmazonCloudWatch",
+            "resource": "Metrics and logs",
+            "emissions_kg_co2e": 195
+        }
+    ]
+}
