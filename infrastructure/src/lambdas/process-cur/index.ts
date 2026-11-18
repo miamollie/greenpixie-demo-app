@@ -38,7 +38,7 @@ export async function handler(event: RunEvent) {
     throw new Error("gridPeriod must use YYYY-MM format");
 
   const objects = await curClient.listObjects(period);
-  const { rates, version } = await greenpixieClient.fetchRateCard(period);
+  const { rates, version } = await greenpixieClient.fetchRateCard();
   const { totals, matchedRows, history } = await emissions.publish(
     curClient.readRows(objects),
     period,

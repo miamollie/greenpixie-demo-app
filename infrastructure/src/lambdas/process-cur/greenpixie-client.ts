@@ -25,16 +25,22 @@ export class GreenpixieClient {
     private readonly secretArn: string,
   ) {}
 
-  async fetchRateCard(period: string) {
+  async fetchRateCard() {
     const token = await this.getApiKey();
-    const query = new URLSearchParams({ limit: "1000", grid_period: period });
+    // Search params limited to what is available in the free tier (EC2 only)
+    const query = new URLSearchParams({
+      include_totals: "true",
+      limit: "1000",
+      region: "us-east-1",
+      line_item_product_code: "AmazonEC2",
+    });
     let nextUrl: string | null =
-      `${this.apiRoot}/v1/ratecards/cloud/aws/full?${query}`;
+      `${this.apiRoot}/v1/ratecards/cloud/aws/usage?${query}`;
     let version = "unknown";
     const rates = new Map<string, number | null>();
 
     while (nextUrl) {
-      const url = new URL(nextUrl);
+      const url: URL = new URL(nextUrl);
       if (url.protocol !== "https:" || url.hostname !== "api.greenpixie.com") {
         throw new Error("Greenpixie pagination returned an unexpected URL");
       }
@@ -45,7 +51,9 @@ export class GreenpixieClient {
         const unit = String(item.pricing_unit);
         const key = joinKey(code, unit);
         if (rates.has(key)) {
-          throw new Error(`Duplicate Greenpixie rate card key: ${code}/${unit}`);
+          throw new Error(
+            `Duplicate Greenpixie rate card key: ${code}/${unit}`,
+          );
         }
 
         const rowVersion = String(item.version ?? version);
