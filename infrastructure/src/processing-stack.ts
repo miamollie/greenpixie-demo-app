@@ -8,53 +8,33 @@ import * as nodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
 
+export interface CarbonProcessingStackProps extends cdk.StackProps {
+  emissionsBucketName: string;
+  curBucketName: string;
+  curDataPrefix: string;
+  maxCurBytes: string;
+  greenpixieSecretArn: string;
+  isDemo?: boolean;
+}
+
 export class CarbonProcessingStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: CarbonProcessingStackProps) {
     super(scope, id, props);
 
-    const emissionsBucketName = new cdk.CfnParameter(
-      this,
-      "EmissionsBucketName",
-      {
-        type: "String",
-        description:
-          "Existing private emissions bucket from the Carbon Visualiser site stack.",
-      },
-    );
-    const curBucketName = new cdk.CfnParameter(this, "CurBucketName", {
-      type: "String",
-      description: "S3 bucket receiving the AWS CUR 2.0 Data Export.",
-    });
-    const curPrefix = new cdk.CfnParameter(this, "CurDataPrefix", {
-      type: "String",
-      description:
-        "CUR export prefix ending immediately before /data/BILLING_PERIOD=YYYY-MM/.",
-    });
-    const maxCurBytes = new cdk.CfnParameter(this, "MaxCurBytes", {
-      type: "Number",
-      default: 67108864,
-      description:
-        "Maximum combined compressed CSV size for one billing period (default 64 MiB).",
-    });
-    const greenpixieSecretArn = new cdk.CfnParameter(
-      this,
-      "GreenpixieApiKeySecretArn",
-      {
-        type: "String",
-        description:
-          "Secrets Manager secret ARN in eu-north-1. SecretString may be the key or JSON containing api_key.",
-        noEcho: true,
-      },
-    );
+    const {
+      emissionsBucketName,
+      curBucketName,
+      curDataPrefix,
+      maxCurBytes,
+      greenpixieSecretArn,
+      isDemo = false,
+    } = props;
 
-    const rateCardBucket = new s3.Bucket(this, "RateCardBucket", {
+    const demoDataBucket = new s3.Bucket(this, "DemoDataBucket", {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       encryption: s3.BucketEncryption.S3_MANAGED,
       enforceSSL: true,
       versioned: true,
-      lifecycleRules: [
-        { prefix: "snapshots/", expiration: cdk.Duration.days(1825) },
-      ],
     });
 
     const processor = new nodejs.NodejsFunction(this, "ProcessCurAndPublish", {
@@ -66,43 +46,46 @@ export class CarbonProcessingStack extends cdk.Stack {
       reservedConcurrentExecutions: 1,
       bundling: { minify: true, sourceMap: false },
       environment: {
-        CUR_BUCKET: curBucketName.valueAsString,
-        CUR_PREFIX: curPrefix.valueAsString,
-        MAX_CUR_BYTES: maxCurBytes.valueAsString,
-        RATE_CARD_BUCKET: rateCardBucket.bucketName,
-        EMISSIONS_BUCKET: emissionsBucketName.valueAsString,
-        GREENPIXIE_SECRET_ARN: greenpixieSecretArn.valueAsString,
+        CUR_BUCKET: curBucketName,
+        CUR_PREFIX: curDataPrefix,
+        MAX_CUR_BYTES: maxCurBytes,
+        DEMO_CUR_BUCKET: demoDataBucket.bucketName,
+        IS_DEMO: String(isDemo),
+        EMISSIONS_BUCKET: emissionsBucketName,
+        GREENPIXIE_SECRET_ARN: greenpixieSecretArn,
       },
     });
 
-    rateCardBucket.grantReadWrite(processor);
+    if (isDemo) {
+      demoDataBucket.grantRead(processor);
+    } else {
+      const curArn = `arn:${this.partition}:s3:::${curBucketName}`;
+      processor.addToRolePolicy(
+        new iam.PolicyStatement({
+          actions: ["s3:GetBucketLocation", "s3:ListBucket"],
+          resources: [curArn],
+        }),
+      );
+      processor.addToRolePolicy(
+        new iam.PolicyStatement({
+          actions: ["s3:GetObject"],
+          resources: [`${curArn}/${curDataPrefix}/data/BILLING_PERIOD=*/*`],
+        }),
+      );
+    }
+
     processor.addToRolePolicy(
       new iam.PolicyStatement({
         actions: ["secretsmanager:GetSecretValue"],
-        resources: [greenpixieSecretArn.valueAsString],
+        resources: [greenpixieSecretArn],
       }),
     );
 
-    const curArn = `arn:${this.partition}:s3:::${curBucketName.valueAsString}`;
-    processor.addToRolePolicy(
-      new iam.PolicyStatement({
-        actions: ["s3:GetBucketLocation", "s3:ListBucket"],
-        resources: [curArn],
-      }),
-    );
-    processor.addToRolePolicy(
-      new iam.PolicyStatement({
-        actions: ["s3:GetObject"],
-        resources: [
-          `${curArn}/${curPrefix.valueAsString}/data/BILLING_PERIOD=*/*`,
-        ],
-      }),
-    );
     processor.addToRolePolicy(
       new iam.PolicyStatement({
         actions: ["s3:GetObject", "s3:PutObject"],
         resources: [
-          `arn:${this.partition}:s3:::${emissionsBucketName.valueAsString}/data/emissions.json`,
+          `arn:${this.partition}:s3:::${emissionsBucketName}/data/emissions.json`,
         ],
       }),
     );
@@ -117,8 +100,8 @@ export class CarbonProcessingStack extends cdk.Stack {
     new cdk.CfnOutput(this, "ProcessingLambdaName", {
       value: processor.functionName,
     });
-    new cdk.CfnOutput(this, "RateCardBucketName", {
-      value: rateCardBucket.bucketName,
+    new cdk.CfnOutput(this, "DemoDataBucketName", {
+      value: demoDataBucket.bucketName,
     });
   }
 }

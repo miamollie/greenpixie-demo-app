@@ -80,10 +80,9 @@ async function fetchRateCard(period: string, token: string) {
     `${apiRoot}/v1/ratecards/cloud/aws/full?${query}`;
   let version = "unknown";
   const rates = new Map<string, number | null>();
-  const snapshot: Array<Record<string, string | number | null>> = [];
 
   while (nextUrl) {
-    const url = new URL(nextUrl);
+    const url: URL = new URL(nextUrl);
     if (url.protocol !== "https:" || url.hostname !== "api.greenpixie.com") {
       throw new Error("Greenpixie pagination returned an unexpected URL");
     }
@@ -104,13 +103,6 @@ async function fetchRateCard(period: string, token: string) {
         key,
         factor !== null && Number.isFinite(factor) ? factor : null,
       );
-      snapshot.push({
-        rate_code: code,
-        pricing_unit: unit,
-        total_tonnes_co2e_per_pricing_unit: factor,
-        version: rowVersion,
-        grid_period: period,
-      });
     }
     nextUrl = page.links?.next
       ? new URL(page.links.next, apiRoot).toString()
@@ -118,26 +110,14 @@ async function fetchRateCard(period: string, token: string) {
   }
 
   if (!rates.size) throw new Error("Greenpixie returned no rate-code rows");
-  const body = snapshot.map((row) => JSON.stringify(row)).join("\n") + "\n";
-  const bucket = process.env.RATE_CARD_BUCKET!;
-  const snapshotKey = `snapshots/grid-period=${period}/version=${version}/rate-card.jsonl`;
-  for (const key of [snapshotKey, "current/rate-card.jsonl"]) {
-    await s3.send(
-      new PutObjectCommand({
-        Bucket: bucket,
-        Key: key,
-        Body: body,
-        ContentType: "application/x-ndjson",
-      }),
-    );
-  }
-  return { rates, version, rows: snapshot.length };
+
+  return { rates, version };
 }
 
 async function listCurObjects(
   period: string,
+  bucket: string,
 ): Promise<Array<{ key: string; size: number }>> {
-  const bucket = process.env.CUR_BUCKET!;
   const root = process.env.CUR_PREFIX!.replace(/^\/+|\/+$/g, "");
   const prefix = `${root ? `${root}/` : ""}data/BILLING_PERIOD=${period}/`;
   const objects: Array<{ key: string; size: number }> = [];
@@ -176,9 +156,12 @@ async function listCurObjects(
   return objects;
 }
 
-async function* rowsFromObject(key: string): AsyncGenerator<CurRow> {
+async function* rowsFromObject(
+  key: string,
+  bucket: string,
+): AsyncGenerator<CurRow> {
   const result = await s3.send(
-    new GetObjectCommand({ Bucket: process.env.CUR_BUCKET!, Key: key }),
+    new GetObjectCommand({ Bucket: bucket, Key: key }),
   );
   if (!result.Body) throw new Error(`S3 returned an empty body for ${key}`);
   const body = result.Body as Readable;
@@ -212,15 +195,23 @@ export async function handler(event: RunEvent) {
   if (!/^\d{4}-\d{2}$/.test(period))
     throw new Error("gridPeriod must use YYYY-MM format");
 
-  const objects = await listCurObjects(period);
-  const {
-    rates,
-    version,
-    rows: rateCardRows,
-  } = await fetchRateCard(period, await getApiKey());
+  const curBucket =
+    process.env.IS_DEMO === "true"
+      ? process.env.DEMO_CUR_BUCKET!
+      : process.env.CUR_BUCKET!;
+  const objects = await listCurObjects(period, curBucket);
+  const { rates, version } = await fetchRateCard(period, await getApiKey());
+
+  /***
+   *  This syntax is idiomatic for streaming rows via a generator.
+   *  It has the benefit being not all rows are stored in memory at once.
+   *  This is important for large CUR exports, which can be hundreds of
+   *  MBs compressed and several GBs uncompressed.
+   *  */
   const allRows = (async function* () {
-    for (const object of objects) yield* rowsFromObject(object.key);
+    for (const object of objects) yield* rowsFromObject(object.key, curBucket);
   })();
+
   const { totals, matchedRows } = await aggregateRows(allRows, rates);
   const history = mergeHistory(await readHistory(), period, totals, version);
 
@@ -239,7 +230,6 @@ export async function handler(event: RunEvent) {
       period,
       objects: objects.length,
       compressedBytes: objects.reduce((sum, object) => sum + object.size, 0),
-      rateCardRows,
       matchedRows,
       services: totals.size,
     }),
