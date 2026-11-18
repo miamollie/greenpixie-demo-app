@@ -6,16 +6,17 @@
     "build": "tsc",
     "test:processing": "npm run build && node --test dist/lambdas/process-cur/logic.test.js",
     "synth": "npm run build && AWS_REGION=${AWS_REGION:-eu-north-1} cdk synth",
-    "synth:site": "npm run build && AWS_REGION=${AWS_REGION:-eu-north-1} cdk synth CarbonVisualiserStack",
-    "synth:processing": "npm run build && AWS_REGION=${AWS_REGION:-eu-north-1} cdk synth CarbonProcessingStack",
-    "deploy:site": "npm run build && AWS_REGION=${AWS_REGION:-eu-north-1} cdk deploy CarbonVisualiserStack",
-    "deploy:processing": "npm run build && : \"${EMISSIONS_BUCKET_NAME:?Set EMISSIONS_BUCKET_NAME}\" \"${CUR_BUCKET_NAME:?Set CUR_BUCKET_NAME}\" \"${CUR_DATA_PREFIX:?Set CUR_DATA_PREFIX}\" \"${GREENPIXIE_SECRET_ARN:?Set GREENPIXIE_SECRET_ARN}\" && AWS_REGION=${AWS_REGION:-eu-north-1} cdk deploy CarbonProcessingStack --parameters CarbonProcessingStack:EmissionsBucketName=${EMISSIONS_BUCKET_NAME} --parameters CarbonProcessingStack:CurBucketName=${CUR_BUCKET_NAME} --parameters CarbonProcessingStack:CurDataPrefix=${CUR_DATA_PREFIX} --parameters CarbonProcessingStack:GreenpixieApiKeySecretArn=${GREENPIXIE_SECRET_ARN} --parameters CarbonProcessingStack:MaxCurBytes=${CUR_MAX_BYTES:-67108864}"
+    "synth:site": "npm run build && if [ ! -f .env ]; then echo 'Missing infrastructure/.env; copy .env.dev to .env and fill in the values.' >&2; exit 1; fi && dotenv -e .env -- cdk synth CarbonVisualiserStack",
+    "synth:processing": "npm run build && if [ ! -f .env ]; then echo 'Missing infrastructure/.env; copy .env.dev to .env and fill in the values.' >&2; exit 1; fi && dotenv -e .env -v CDK_PROCESSING_STACK=true -- cdk synth CarbonProcessingStack",
+    "deploy:site": "npm run build && if [ ! -f .env ]; then echo 'Missing infrastructure/.env; copy .env.dev to .env and fill in the values.' >&2; exit 1; fi && dotenv -e .env -- cdk deploy CarbonVisualiserStack",
+    "deploy:processing": "npm run build && if [ ! -f .env ]; then echo 'Missing infrastructure/.env; copy .env.dev to .env and fill in the values.' >&2; exit 1; fi && dotenv -e .env -v CDK_PROCESSING_STACK=true -- cdk deploy CarbonProcessingStack"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
     "aws-cdk": "^2.1148.0",
     "aws-cdk-lib": "^2.275.0",
     "constructs": "^10.8.1",
+    "dotenv-cli": "^11.1.0",
     "esbuild": "^0.28.2",
     "typescript": "^7.0.2"
   },
