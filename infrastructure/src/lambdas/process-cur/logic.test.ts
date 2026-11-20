@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { aggregateRows, joinKey, mergeHistory } from "./logic";
+import { Emissions, joinKey } from "./emissions";
 
 async function* rows(items: Array<Record<string, string>>) {
   yield* items;
 }
 
 test("joins rate code and unit and converts tonnes to kilograms", async () => {
-  const result = await aggregateRows(
+  const result = await Emissions.calculateRows(
     rows([
       {
         pricing_rate_code: "sku.term.price",
@@ -31,7 +31,7 @@ test("joins rate code and unit and converts tonnes to kilograms", async () => {
 
 test("fails when a coded CUR row has no matching factor", async () => {
   await assert.rejects(
-    aggregateRows(
+    Emissions.calculateRows(
       rows([
         {
           pricing_rate_code: "unknown",
@@ -47,7 +47,7 @@ test("fails when a coded CUR row has no matching factor", async () => {
 });
 
 test("adds a period without losing previous emissions", () => {
-  const merged = mergeHistory(
+  const merged = Emissions.mergeHistory(
     {
       schema_version: 1,
       dataset: "greenpixie",
