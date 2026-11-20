@@ -64,7 +64,7 @@ body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.55;
 }
 
@@ -195,7 +195,6 @@ h1 em {
   max-width: 520px;
   margin: 0;
   color: var(--muted);
-  font-size: 15px;
 }
 
 .demo-stamp {
@@ -254,7 +253,6 @@ h1 em {
 .metric-detail {
   display: block;
   color: var(--muted);
-  font-size: 12px;
 }
 .metric-label {
   margin-bottom: 8px;
@@ -316,7 +314,6 @@ h1 em {
 .chart-subtitle {
   margin: 5px 0 0;
   color: var(--muted);
-  font-size: 12px;
 }
 a:focus-visible {
   outline: 3px solid #d8b653;
@@ -420,7 +417,6 @@ a:focus-visible {
 .notes-copy {
   margin: 0;
   color: #58675d;
-  font-size: 12px;
   line-height: 1.65;
 }
 .data-flow {
@@ -431,13 +427,14 @@ a:focus-visible {
   gap: 12px;
   padding-top: 13px;
   border-top: 1px solid #d5e0d0;
+  justify-content: center;
 }
 .flow-step {
   display: inline-flex;
   align-items: center;
   gap: 7px;
   color: var(--forest-dark);
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 600;
 }
 .flow-number {
@@ -447,13 +444,11 @@ a:focus-visible {
 }
 .flow-arrow {
   color: #9baa94;
-  font-size: 15px;
 }
 .data-caveat {
   grid-column: 1 / -1;
   margin: -5px 0 0;
   color: #718071;
-  font-size: 10px;
 }
 
 .footer {
@@ -464,15 +459,10 @@ a:focus-visible {
   padding: 18px max(28px, calc((100vw - 1120px) / 2));
   border-top: 1px solid #e1e7dc;
   color: #768178;
-  font-size: 11px;
 }
-.footer-copy {
-  display: grid;
-  gap: 3px;
-}
+
 .footer-carbon {
   color: #718071;
-  font-size: 10px;
 }
 .footer a {
   color: var(--forest);
@@ -498,17 +488,12 @@ a:focus-visible {
   .brand-name {
     font-size: 20px;
   }
-  .brand-caption {
-    font-size: 9px;
-    letter-spacing: 0.8px;
-  }
+
   .brand-divider {
     height: 18px;
     margin-right: 1px;
   }
-  .top-link {
-    font-size: 12px;
-  }
+
   .page-shell {
     width: calc(100% - 32px);
   }
@@ -523,7 +508,6 @@ a:focus-visible {
   }
   .intro-text {
     max-width: 420px;
-    font-size: 14px;
   }
   .demo-stamp {
     margin: 0;
@@ -575,7 +559,6 @@ a:focus-visible {
   }
   .flow-step {
     gap: 5px;
-    font-size: 10px;
   }
   .flow-arrow {
     font-size: 12px;
@@ -609,9 +592,7 @@ a:focus-visible {
     padding-right: 11px;
     padding-left: 12px;
   }
-  .metric-label {
-    font-size: 11px;
-  }
+
   .metric-value {
     font-size: 23px;
   }

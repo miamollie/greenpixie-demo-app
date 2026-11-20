@@ -91,6 +91,13 @@
             We couldn’t load the emissions data. Please try again later.
           </p>
         </div>
+        <div>
+          <p class="chart-note">
+            This is a demo view of estimated emissions for an AWS account. It
+            uses sample data and the Greenpixie API to calculate emissions and
+            visualise their change over time.
+          </p>
+        </div>
       </section>
 
       <section
@@ -137,29 +144,22 @@
             ><span class="flow-number">04</span> Emissions graph</span
           >
         </div>
-        <p class="data-caveat" id="data-caveat">
-          Illustrative values only: the GreenPixie API only provides EC2 data in
-          its free tier, and I don't have any _real_ Ec2 instances running. The
-          stack is real, the workflow is tested, but the data is mocked.
-        </p>
       </section>
     </main>
 
     <footer class="footer">
       <div class="footer-copy">
+        Carbon footprint estimate by
         <a
           href="https://www.websitecarbon.com/website/d19a4fmvijk18e-cloudfront-net/"
-          >Carbon footprint estimate by Website Carbon</a
+          >Website Carbon</a
         >
-        <span class="footer-carbon"
-          >Site footprint estimate: 0.02g CO₂e/page view.</span
-        >
-        If viewed 10,000 times, this web page emits the amount of carbon that 1
-        tree absorbs in a year. If this site used
+        Site footprint estimate: 0.02g CO₂e/page view. If viewed 10,000 times,
+        this web page emits the amount of carbon that 1 tree absorbs in a year.
+        If this site used
         <a href="https://app.greenweb.org/directory/">green hosting</a>, then it
         would emit 9% less CO2.
       </div>
-      <a href="./carbon.txt">carbon.txt <span aria-hidden="true">↗</span></a>
     </footer>
   </body>
 </html>
