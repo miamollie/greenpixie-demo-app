@@ -11,6 +11,48 @@
         "2026-09",
         "2026-10"
     ],
+    "series": [
+        {
+            "id": "amazon-cloudwatch",
+            "label": "AmazonCloudWatch",
+            "values": [
+                222,
+                217,
+                206,
+                195
+            ]
+        },
+        {
+            "id": "amazon-ec2",
+            "label": "AmazonEC2",
+            "values": [
+                670,
+                640,
+                610,
+                585
+            ]
+        },
+        {
+            "id": "amazon-rds",
+            "label": "AmazonRDS",
+            "values": [
+                300,
+                292,
+                280,
+                275
+            ]
+        },
+        {
+            "id": "amazon-s3",
+            "label": "AmazonS3",
+            "values": [
+                220,
+                218,
+                210,
+                205
+            ]
+        }
+    ],
     "observations": [
         {
             "period": "2026-07",
