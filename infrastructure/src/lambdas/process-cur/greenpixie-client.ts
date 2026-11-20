@@ -31,7 +31,6 @@ export class GreenpixieClient {
     const query = new URLSearchParams({
       include_totals: "true",
       limit: "1000",
-      region: "us-east-1",
       line_item_product_code: "AmazonEC2",
     });
     let nextUrl: string | null =

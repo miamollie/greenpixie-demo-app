@@ -4,10 +4,6 @@ import { CurClient } from "./cur-client";
 import { Emissions } from "./emissions";
 import { GreenpixieClient } from "./greenpixie-client";
 
-interface RunEvent {
-  gridPeriod?: string;
-}
-
 function previousMonth(): string {
   const date = new Date();
   date.setUTCDate(1);
@@ -32,19 +28,20 @@ const greenpixieClient = new GreenpixieClient(
 );
 const emissions = new Emissions(s3, process.env.EMISSIONS_BUCKET!);
 
-export async function handler(event: RunEvent) {
-  const period = event.gridPeriod ?? previousMonth();
+export async function handler() {
+  const period = previousMonth();
   if (!/^\d{4}-\d{2}$/.test(period))
     throw new Error("gridPeriod must use YYYY-MM format");
 
-  const objects = await curClient.listObjects(period);
-  const { rates, version } = await greenpixieClient.fetchRateCard();
-  const { totals, matchedRows, history } = await emissions.publish(
+  const [objects, { rates, version }] = await Promise.all([
+    curClient.listObjects(period),
+    greenpixieClient.fetchRateCard(),
+  ]);
+  const { totals, matchedRows } = await Emissions.calculateRows(
     curClient.readRows(objects),
-    period,
     rates,
-    version,
   );
+  const history = await emissions.publish(period, totals, version);
 
   console.info(
     JSON.stringify({

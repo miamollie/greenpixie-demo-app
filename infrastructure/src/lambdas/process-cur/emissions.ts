@@ -34,12 +34,10 @@ export class Emissions {
   ) {}
 
   async publish(
-    rows: AsyncIterable<CurRow>,
     period: string,
-    rates: Map<string, number | null>,
+    totals: Map<string, number>,
     methodologyVersion: string,
-  ) {
-    const { totals, matchedRows } = await Emissions.calculateRows(rows, rates);
+  ): Promise<EmissionsHistory> {
     const history = Emissions.mergeHistory(
       await this.readHistory(),
       period,
@@ -47,7 +45,7 @@ export class Emissions {
       methodologyVersion,
     );
     await this.writeHistory(history);
-    return { history, totals, matchedRows };
+    return history;
   }
 
   static async calculateRows(
@@ -141,9 +139,7 @@ export class Emissions {
     };
   }
 
-  private async readHistory(): Promise<
-    Record<string, unknown> | undefined
-  > {
+  private async readHistory(): Promise<Record<string, unknown> | undefined> {
     try {
       const result = await this.s3.send(
         new GetObjectCommand({ Bucket: this.bucket, Key: this.key }),
@@ -154,7 +150,8 @@ export class Emissions {
         unknown
       >;
     } catch (error) {
-      if (error instanceof Error && error.name === "NoSuchKey") return undefined;
+      if (error instanceof Error && error.name === "NoSuchKey")
+        return undefined;
       throw error;
     }
   }
